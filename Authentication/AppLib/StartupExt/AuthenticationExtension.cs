@@ -1,5 +1,6 @@
 ﻿namespace Authentication.AppLib.StartupExt
 {
+    using Authenticate.AppLib.Concrete;
     using Authentication.AppLib.Base;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
@@ -20,15 +21,15 @@
                 })
                 .AddCookie(options =>
                 {
-                    options.Cookie.Name = "AuthCookieName";
-                    options.LoginPath = "/Account/Login";
-                    options.LogoutPath = "/Account/Logout";
-                    options.AccessDeniedPath = "/Account/AccessDenied";
-                    options.ClaimsIssuer = "ClaimsIssuer";
-                    options.ReturnUrlParameter = "_ReturnUrl";
+                    options.Cookie.Name = Constants.Auth_Cookie_Name;
+                    options.LoginPath = Constants.Auth_Cookie_LoginPath;
+                    options.LogoutPath = Constants.Auth_Cookie_LogoutPath;
+                    options.AccessDeniedPath = Constants.Auth_Cookie_AccessDeniedPath;
+                    options.ClaimsIssuer = Constants.Auth_Cookie_ClaimsIssuer;
+                    options.ReturnUrlParameter = Constants.Auth_Cookie_ReturnUrlParameter;
                     options.SlidingExpiration = true;
                     options.Cookie.HttpOnly = true; // false makes xss vulnerability
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                    options.ExpireTimeSpan = Constants.Auth_Cookie_ExpireTimeSpan;
                     options.Cookie.SameSite = SameSiteMode.Lax;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
                     options.Validate();

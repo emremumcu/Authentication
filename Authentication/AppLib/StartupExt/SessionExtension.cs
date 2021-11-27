@@ -19,6 +19,11 @@
             // return value == null ? default : System.Text.Json.JsonSerializer.Deserialize<T>(value);
             return value == null ? default : Newtonsoft.Json.JsonConvert.DeserializeObject<T>(value);
         }
+
+        public static bool HasKey(this ISession session, string key)
+        {
+            return session.HasKey(key);
+        }
     }
 
     public static class SessionExtension

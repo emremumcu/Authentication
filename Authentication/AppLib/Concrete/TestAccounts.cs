@@ -16,6 +16,7 @@
                 new Claim(ClaimTypes.Surname, "One"),
                 new Claim(ClaimTypes.Email, "userone@myapp.com"),                
                 new Claim(ClaimTypes.IsPersistent, "true"),
+                new Claim(ClaimTypes.Role, "GUEST"),
                 new Claim(ClaimTypes.Role, "USER")
             };
 
@@ -33,7 +34,9 @@
                 new Claim(ClaimTypes.Surname, "One"),
                 new Claim(ClaimTypes.Email, "adminone@myapp.com"),
                 new Claim(ClaimTypes.IsPersistent, "true"),
-                new Claim(ClaimTypes.Role, "ADMIN,USER")
+                new Claim(ClaimTypes.Role, "GUEST"),
+                new Claim(ClaimTypes.Role, "USER"),
+                new Claim(ClaimTypes.Role, "ADMIN")
             };
 
             return AdminClaims;
