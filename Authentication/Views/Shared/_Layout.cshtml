@@ -1,0 +1,62 @@
+@{
+    String controller = ViewContext.RouteData.Values["Controller"].ToString();
+    String action = ViewContext.RouteData.Values["Action"].ToString();
+}
+
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
+    <title>ASP.NET Core MVC Boilerplate Template (V.1)</title>
+    <link href="~/css/app.css" rel="stylesheet" />
+    <link href="~/css/loader2.css" rel="stylesheet" />
+    @*@RenderSection("headSection", required: false)*@
+    @await RenderSectionAsync("headSection", required: false)
+</head>
+
+<body style="font-family: 'Raleway', sans-serif;">
+
+    <div id="preloader">
+        <div id="loader"></div>
+    </div>
+
+    @if (User.Identity.IsAuthenticated && controller != "Account")
+    {
+        <partial name="nav"></partial>
+
+        <partial name="userinfo"></partial>
+    }
+
+    @RenderBody()
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js" integrity="sha512-Meww2sXqNHxI1+5Dyh/9KAtvI9RZSA4c1K2k5iL02oiPO/RH3Q30L3M1albtqMg50u4gRTYdV4EXOQqXEI336A==" crossorigin="anonymous"></script>
+
+
+
+    <script>
+        $(function () {
+            $("#preloader").fadeOut("slow");
+        });
+
+        $(window).on("load", function () {
+            //...
+        });
+
+        window.onload = () => {
+            document.body.addEventListener('submit', function (e) {
+                $("#preloader").fadeIn("slow");
+            });
+        }
+    </script>
+
+    @*@RenderSection("scriptSection", required: false)*@
+    @await RenderSectionAsync("scriptSection", required: false)
+</body>
+</html>

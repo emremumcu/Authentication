@@ -1,0 +1,33 @@
+﻿@model string
+
+<div class="row min-vh-100 d-flex justify-content-center align-items-center">
+
+    <div class="col mt-5">
+
+        <div class="jumbotron mt-5">
+            <h1 class="display-4">Merhaba !</h1>
+            <p class="lead"><b>@Model</b> sayfasına hoş geldiniz.</p>
+            <hr class="my-4">
+            <p>Bu sayfayı görüntülemek için yetkiniz olduğundan bu sayfayı görebiliyorsunuz.</p>
+            <a class="btn btn-primary btn-lg" href="@Url.Content("~/")" role="button">Ana Sayfa</a>
+        </div>
+
+        @{
+            System.Security.Claims.ClaimsIdentity ci = ((System.Security.Claims.ClaimsIdentity)User.Identity);
+
+
+            string userClaimsJson = Newtonsoft.Json.JsonConvert.SerializeObject(ci,
+                Newtonsoft.Json.Formatting.Indented,
+                new Newtonsoft.Json.JsonSerializerSettings { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }
+            ).Trim();
+        }
+
+        
+        <div class="jumbotron">
+        <h2>Current User Info</h2>
+        <pre class="small">@userClaimsJson</pre>
+        </div>
+
+    </div>
+
+</div>

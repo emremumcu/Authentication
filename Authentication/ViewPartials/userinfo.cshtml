@@ -1,0 +1,47 @@
+﻿@{
+    System.Security.Claims.ClaimsIdentity ci = ((System.Security.Claims.ClaimsIdentity)User.Identity);
+
+
+    string userClaimsJson = Newtonsoft.Json.JsonConvert.SerializeObject(ci,
+        Newtonsoft.Json.Formatting.Indented,
+        new Newtonsoft.Json.JsonSerializerSettings { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }
+    ).Trim();
+}
+
+@section headSection {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300&display=swap" rel="stylesheet">
+}
+
+
+<div class="modal fade" id="UserInfoModal" tabindex="-1" aria-labelledby="UserInfoModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-fullscreen">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h3 class="modal-title" id="UserInfoModalLabel">User Info</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">  
+                
+                <div class="container" style="font-family: 'Fira Code', monospace; font-size:12px;">
+                    <div class="bg-light rounded-5 p-3">
+                        <pre class="small">@userClaimsJson</pre>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
