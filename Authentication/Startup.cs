@@ -28,6 +28,8 @@ namespace Authentication
 
             app.UseStaticFiles();
 
+            app._UseSCP();
+
             app.UseRouting();
 
             app._UseSession();

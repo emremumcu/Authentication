@@ -15,9 +15,9 @@
             services.AddAuthorization(options =>
             {
                 options.DefaultPolicy = AuthorizationPolicyLibrary.defaultPolicy;
-                options.FallbackPolicy = AuthorizationPolicyLibrary.fallbackPolicy;               
+                options.FallbackPolicy = AuthorizationPolicyLibrary.fallbackPolicy;
+                options.AddPolicy(UserRequirement.PolicyName, AuthorizationPolicyLibrary.userPolicy);
                 options.AddPolicy(AdminRequirement.PolicyName, AuthorizationPolicyLibrary.adminPolicy);
-                //options.AddPolicy(DeveloperRequirement.PolicyName, AuthorizationPolicyLibrary.developerPolicy);
             });
 
             services.AddSingleton<IAuthorizationHandler, BaseHandler>();
