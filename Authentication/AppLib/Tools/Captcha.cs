@@ -1,4 +1,5 @@
-﻿namespace Authentication.AppLib.Tools
+﻿// Install-Package SixLabors.ImageSharp
+namespace Authentication.AppLib.Tools
 {
     using Authenticate.AppLib.Concrete;
     using Authentication.AppLib.StartupExt;

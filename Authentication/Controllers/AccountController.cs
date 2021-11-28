@@ -11,13 +11,8 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.IdentityModel.Tokens;
     using System;
-    using System.Collections.Generic;
-    using System.IdentityModel.Tokens.Jwt;
     using System.IO;
-    using System.Security.Claims;
-    using System.Text;
     using System.Threading.Tasks;
 
     [ApiExplorerSettings(IgnoreApi = true)]
@@ -142,7 +137,7 @@
         [Route("get-captcha-image")]
         public IActionResult GetCaptchaImage()
         {
-            var result = Captcha.GenerateCaptchaImage(HttpContext);
+            var result = Captcha2.GenerateCaptchaImage(HttpContext);
             Stream s = new MemoryStream(result.CaptchaByteData);
             return new FileStreamResult(s, "image/png");
         }
@@ -202,6 +197,7 @@
 }
 
 
+// Snippets
 //[NonAction]
 //private async Task<IActionResult> CustomLogin()
 //{
@@ -214,7 +210,6 @@
 //    HttpContext.User = claimsPrincipal;
 //    return RedirectToAction("Index", "Home");
 //}
-
 
 //IServiceProvider services = HttpContext.RequestServices;
 //IAuthorize authorizer = services.GetRequiredService<IAuthorize>();
@@ -236,13 +231,9 @@
 //System.Security.Claims.ClaimsIdentity ci2 = ((System.Security.Claims.ClaimsIdentity)User.Identity);
 //return RedirectToAction("Index", "Home");
 
-/// <summary>
-/// Required Packages:
-/// ------------------
-/// Install-Package Microsoft.IdentityModel
-/// Install-Package Microsoft.IdentityModel.Tokens
-/// Install-Package System.IdentityModel.Tokens.Jwt
-/// </summary>
+// Install-Package Microsoft.IdentityModel
+// Install-Package Microsoft.IdentityModel.Tokens
+// Install-Package System.IdentityModel.Tokens.Jwt
 //[NonAction]
 //public string GenerateJwtToken()
 //{
