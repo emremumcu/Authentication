@@ -1,6 +1,6 @@
 ﻿namespace Authentication.AppLib.Conventions
 {
-    using Authentication.AppLib.Base;
+    using Authentication.AppLib.StartupExt;
     using Microsoft.AspNetCore.Mvc.ApplicationModels;
     using Microsoft.AspNetCore.Mvc.Authorization;
 

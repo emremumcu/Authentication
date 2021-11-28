@@ -1,17 +1,11 @@
 namespace Authentication
 {
-    using Authenticate.AppLib.Abstract;
-    using Authenticate.AppLib.Concrete;
-    using Authentication.AppLib.Evaluators;
     using Authentication.AppLib.StartupExt;
-    using Microsoft.AspNetCore.Authentication.Cookies;
-    using Microsoft.AspNetCore.Authorization.Policy;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using System;
 
     public class Startup
     {
@@ -26,13 +20,6 @@ namespace Authentication
             services._AddAuthentication();
 
             services._AddAuthorization();
-
-
-
-
-
-            // TODO: commen tout in PROD
-            //services.AddSingleton<IPolicyEvaluator, TestPolicyEvaluator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

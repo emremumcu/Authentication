@@ -28,6 +28,9 @@
             {
                 /// Install-Package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation   
                 mvcBuilder.AddRazorRuntimeCompilation();
+
+                // TODO: commen tout in PROD
+                //services.AddSingleton<IPolicyEvaluator, TestPolicyEvaluator>();
             }
 
             services.AddRazorPages();
