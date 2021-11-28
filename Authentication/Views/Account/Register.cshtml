@@ -20,25 +20,28 @@
 
                             <form asp-controller="Account" asp-action="Register" method="post">
 
-                                <div class="form-group">
+                                <div class="form-group mb-2">
                                     <label asp-for="Username"></label>
-                                    <input asp-for="Username" class="form-control" autocomplete="off" placeholder="Kullanıcı adını giriniz" />
                                     <span asp-validation-for="Username"></span>
+                                    <input asp-for="Username" class="form-control" autocomplete="off" placeholder="Kullanıcı adını giriniz" />
+                                    <small class="form-text text-muted">Kendiniz için bir kullanıcı adı belirleyin.</small>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group mb-2">
                                     <label asp-for="Password"></label>
-                                    <input asp-for="Password" class="form-control" placeholder="Şifrenizi giriniz" />
                                     <span asp-validation-for="Password"></span>
+                                    <input asp-for="Password" class="form-control" placeholder="Şifrenizi giriniz" />
+                                    <small class="form-text text-muted">Kendiniz için bir şifre belirleyin.</small>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group mb-2">
                                     <label asp-for="ConfirmPassword"></label>
-                                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Şifrenizi tekrar giriniz" />
                                     <span asp-validation-for="ConfirmPassword"></span>
+                                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Şifrenizi tekrar giriniz" />
+                                    <small class="form-text text-muted">Şifrenizi doğrulamak için yeniden girin.</small>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group mb-2">
                                     <label asp-for="Captcha"></label>
                                     <div class="input-group" style="cursor: pointer">
                                         <div class="input-group-prepend">
@@ -60,7 +63,7 @@
                                 <button type="submit" class="btn btn-primary btn-block">Tamam</button>
 
                                 <div class="text-center my-4">
-                                    <a class="small" href="@Url.Content("~/Account/Login")">Kullanıcı Girişi</a> | <a class="small" href="#">Şifremi Unuttum</a>
+                                    <a class="small" href="@Url.Content("~/Account/Login")">Kullanıcı Girişi</a> | <a class="small" href="#" data-bs-toggle="modal" data-bs-target="#AppInfoModal">Şifremi Unuttum</a>
                                 </div>
 
                             </form>

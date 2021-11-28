@@ -4,7 +4,8 @@
 
     public class RegisterViewModel : LoginViewModel
     {
-        [DataType(DataType.Password), Compare(nameof(Password))]
+        [Display(Name = "Şifrenizi Tekrarlayın")]
+        [DataType(DataType.Password), Compare(nameof(Password), ErrorMessage = "Şifreler eşleşmiyor")]
         public string ConfirmPassword { get; set; }
     }
 }

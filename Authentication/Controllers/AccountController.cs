@@ -38,7 +38,9 @@
         {
             if (_authenticator.AuthenticateUser("", username, password))
             {
-                AuthenticationTicket userTicket = _authorizer.GetTicket(TestAccounts.GetUserClaims());                              
+                AuthenticationTicket userTicket = _authorizer.GetTicket(TestAccounts.GetUserClaims());
+                
+                userTicket.Properties.IsPersistent = remember;
 
                 HttpContext.Session.SetKey<bool>(Constants.SessionKeyLogin , true);
 
@@ -47,9 +49,6 @@
                     userTicket.Principal,
                     userTicket.Properties
                 );
-
-                // Get Principlal:
-                System.Security.Claims.ClaimsIdentity ci = ((System.Security.Claims.ClaimsIdentity)User.Identity);
                 
                 return RedirectToAction("Index", "Home");
             }
@@ -66,8 +65,6 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var a = HttpContext.Session.GetKey<string>(Constants.SessionKeyCaptcha);
-
             void ClearCaptchaText()
             {
                 // Even the CaptchaCode is cleared in Model,
@@ -202,45 +199,6 @@
             }
         }
     }
-
-
-
-    /// <summary>
-    /// Required Packages:
-    /// ------------------
-    /// Install-Package Microsoft.IdentityModel
-    /// Install-Package Microsoft.IdentityModel.Tokens
-    /// Install-Package System.IdentityModel.Tokens.Jwt
-    /// </summary>
-    public partial class AccountController
-    {
-        // public async Task<IActionResult> Login([FromBody]LoginViewModel user)
-
-        [NonAction]
-        public string GenerateJwtToken()
-        {
-            var claims = new List<Claim>{
-                new Claim(JwtRegisteredClaimNames.Sub, "sub"),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ThisIsMyPasswrod3"));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(Convert.ToDouble(30));
-
-            var token = new JwtSecurityToken(
-                issuer: "http://localhost",
-                audience: "http://localhost",
-                claims: claims,
-                expires: expires,
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-    }
-
 }
 
 
@@ -277,3 +235,34 @@
 //);
 //System.Security.Claims.ClaimsIdentity ci2 = ((System.Security.Claims.ClaimsIdentity)User.Identity);
 //return RedirectToAction("Index", "Home");
+
+/// <summary>
+/// Required Packages:
+/// ------------------
+/// Install-Package Microsoft.IdentityModel
+/// Install-Package Microsoft.IdentityModel.Tokens
+/// Install-Package System.IdentityModel.Tokens.Jwt
+/// </summary>
+//[NonAction]
+//public string GenerateJwtToken()
+//{
+//    var claims = new List<Claim>{
+//                new Claim(JwtRegisteredClaimNames.Sub, "sub"),
+//                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+//                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
+//            };
+
+//    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ThisIsMyPasswrod3"));
+//    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+//    var expires = DateTime.Now.AddDays(Convert.ToDouble(30));
+
+//    var token = new JwtSecurityToken(
+//        issuer: "http://localhost",
+//        audience: "http://localhost",
+//        claims: claims,
+//        expires: expires,
+//        signingCredentials: creds
+//    );
+
+//    return new JwtSecurityTokenHandler().WriteToken(token);
+//}
