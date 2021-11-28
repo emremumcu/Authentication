@@ -18,7 +18,6 @@
                     config.Filters.Add(new AuthorizeFilter());
                     config.Filters.Add(new AddHeaderFilter("X-Frame-Options", "SAMEORIGIN")); // prevent click-jacking
                     config.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-                    //config.Filters.Add(new AuthorizeFilter());
                     // config.Conventions.Add(new ControllerBasedAuthorizeFilterConvention());
                 })
                 /// Use session based TempData instead of cookie based TempData

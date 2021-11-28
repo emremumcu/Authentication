@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Authentication.Controllers
 {
+    [CustomAuthorize(Privileges = "P1, P2")]
     public class CustomController : Controller
     {
-        [AppAuthorizeAttribute(Privileges = "")]
         public IActionResult Index()
         {
             return View();
