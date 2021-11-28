@@ -8,11 +8,11 @@ namespace Authentication.AppLib.Tools
 {
     public static class RandomGenerator
     {
-        static readonly RNGCryptoServiceProvider csp;
+        static readonly RandomNumberGenerator csp;
 
         static RandomGenerator()
         {
-            csp = new RNGCryptoServiceProvider();
+            csp = RandomNumberGenerator.Create();
         }
 
         /// <summary>

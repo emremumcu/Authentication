@@ -74,7 +74,7 @@
             {
                 if (ModelState.IsValid)
                 {
-                    if (!Captcha.ValidateCaptchaCode(model.Captcha.CaptchaCode, HttpContext))
+                    if (!Captcha2.ValidateCaptchaCode(model.Captcha.CaptchaCode, HttpContext))
                     {
                         ClearCaptchaText();
                         ModelState.AddModelError("Captcha", "Güvenlik kodu yanlış.");
@@ -166,7 +166,7 @@
             {
                 if (ModelState.IsValid)
                 {
-                    if (!Captcha.ValidateCaptchaCode(model.Captcha.CaptchaCode, HttpContext))
+                    if (!Captcha2.ValidateCaptchaCode(model.Captcha.CaptchaCode, HttpContext))
                     {
                         ClearCaptchaText();
                         ModelState.AddModelError("Captcha", "Güvenlik kodu yanlış.");
