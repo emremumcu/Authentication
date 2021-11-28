@@ -8,43 +8,37 @@
 
     public class AdminRequirement : IAuthorizationRequirement
     {   
-        public string PolicyName { get; private set; } = "AdminPolicy";
+        public const string PolicyName = "AdminPolicy";
 
-        public string RoleName { get; private set; } = "ADMIN";
+        public string[] Roles { get; private set; }
 
-        public AdminRequirement(string adminRoleName)
+        public AdminRequirement(params string[] roles)
         {
-            RoleName = adminRoleName;
+            Roles = roles;
         }
     }
 
     public class AdminHandler : AuthorizationHandler<AdminRequirement>
     {
-
-
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AdminRequirement requirement)
         {
             try
             {
-                if (context.User.Identity.IsAuthenticated)
+                if (context.User != null && context.User.Identity.IsAuthenticated)
                 {
+                    string[] roles = context.User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray();
 
-                    ClaimsPrincipal principal = context.User;
-
-                    String role = principal.FindFirst(ClaimTypes.Role).Value;
-                    
-                    return Task.CompletedTask;
-
-                    //if (role.Split(Constants.Claims_Role_Seperator).Any(i => i == requirement.RoleName))
-                    //{
-                    //    context.Succeed(requirement);
-                    //    return Task.CompletedTask;
-                    //}
-                    //else
-                    //{
-                    //    context.Fail();
-                    //    return Task.CompletedTask;
-                    //}
+                    // Using Any() assures that the intersection algorithm stops when the first equal object is found.
+                    if (requirement.Roles.Intersect(roles).Any())
+                    {
+                        context.Succeed(requirement);
+                        return Task.CompletedTask;
+                    }
+                    else
+                    {
+                        context.Fail();
+                        return Task.CompletedTask;
+                    }
                 }
                 else
                 {

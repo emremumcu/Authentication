@@ -7,7 +7,7 @@ namespace Authentication.AppLib.Requirements
 {
     public class UserRequirement : IAuthorizationRequirement
     {
-        public string PolicyName { get; private set; } = "UserPolicy";
+        public const string PolicyName = "UserPolicy";
 
         public string[] Roles { get; private set; }
 

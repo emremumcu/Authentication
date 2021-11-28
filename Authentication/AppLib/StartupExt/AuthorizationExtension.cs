@@ -2,6 +2,7 @@
 {
     using Authenticate.AppLib.Abstract;
     using Authenticate.AppLib.Concrete;
+    using Authentication.AppLib.Requirements;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
@@ -13,9 +14,9 @@
         {
             services.AddAuthorization(options =>
             {
-                //options.DefaultPolicy = AuthorizationPolicyLibrary.defaultPolicy;
-                //options.FallbackPolicy = AuthorizationPolicyLibrary.fallbackPolicy;               
-                //options.AddPolicy(AdminHandler.PolicyName, AuthorizationPolicyLibrary.adminPolicy);
+                options.DefaultPolicy = AuthorizationPolicyLibrary.defaultPolicy;
+                options.FallbackPolicy = AuthorizationPolicyLibrary.fallbackPolicy;               
+                options.AddPolicy(AdminRequirement.PolicyName, AuthorizationPolicyLibrary.adminPolicy);
                 //options.AddPolicy(DeveloperRequirement.PolicyName, AuthorizationPolicyLibrary.developerPolicy);
             });
 
@@ -47,41 +48,39 @@
         public static AuthorizationPolicy defaultPolicy = new AuthorizationPolicyBuilder()
            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
            .RequireAuthenticatedUser()
-           //.AddRequirements(new BaseRequirement())           
+           .AddRequirements(new BaseRequirement())           
            .Build();
 
         public static AuthorizationPolicy fallbackPolicy = new AuthorizationPolicyBuilder()
            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
            .RequireAuthenticatedUser()
-           //.AddRequirements(new BaseRequirement())
+           .AddRequirements(new BaseRequirement())
            .Build();
 
-        public static AuthorizationPolicy developerPolicy = new AuthorizationPolicyBuilder()
+        public static AuthorizationPolicy userPolicy = new AuthorizationPolicyBuilder()
             .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
             .RequireAuthenticatedUser()
-            .RequireRole("dev")
+            .AddRequirements(new BaseRequirement())
+            .AddRequirements(new UserRequirement("USER"))
+            //.RequireRole("USER")
             .Build();
 
         public static AuthorizationPolicy adminPolicy = new AuthorizationPolicyBuilder()
             .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
             .RequireAuthenticatedUser()
-            .RequireRole("admin")
+            .AddRequirements(new BaseRequirement())
+            .AddRequirements(new AdminRequirement("ADMIN","ADMINISTRATOR"))
+            //.RequireRole("ADMIN")
             .Build();
 
-        public static AuthorizationPolicy age18Policy = new AuthorizationPolicyBuilder()
-            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
-            .RequireAuthenticatedUser()
-            //.Requirements.Add(new AgeRequirement(18))
-            .Build();
-
-        public static AuthorizationPolicy assertionPolicy = new AuthorizationPolicyBuilder()
-            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
-            .RequireAuthenticatedUser()
-            .RequireRole("admin")
-            // The Require Assertion method takes a lambda that receives the Http Context object and returns a Boolean value. 
-            // Therefore, the assertion is simply a conditional statement.
-            .RequireAssertion(ctx => { return ctx.User.HasClaim("editor", "contents") || ctx.User.HasClaim("level", "senior"); })
-            .Build();
+        //public static AuthorizationPolicy assertionPolicy = new AuthorizationPolicyBuilder()
+        //    .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+        //    .RequireAuthenticatedUser()
+        //    .RequireRole("admin")
+        //    // The Require Assertion method takes a lambda that receives the Http Context object and returns a Boolean value. 
+        //    // Therefore, the assertion is simply a conditional statement.
+        //    .RequireAssertion(ctx => { return ctx.User.HasClaim("editor", "contents") || ctx.User.HasClaim("level", "senior"); })
+        //    .Build();
     }
 }
 

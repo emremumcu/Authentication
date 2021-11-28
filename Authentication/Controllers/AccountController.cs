@@ -111,6 +111,8 @@
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
+            HttpContext.User = null;
+
             HttpContext.Session.RemoveKey(Constants.SessionKeyLogin);
 
             HttpContext.Session.Clear();
