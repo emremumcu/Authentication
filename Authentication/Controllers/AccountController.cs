@@ -11,7 +11,6 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.IdentityModel.Tokens;
     using System;
     using System.Collections.Generic;
@@ -30,104 +29,28 @@
 
         public AccountController(IAuthenticate authenticator, IAuthorize authorizer)
         {
-            
-
             _authenticator = authenticator;
             _authorizer = authorizer;
         }
 
         [NonAction]
-        private async Task<IActionResult> CustomLogin()
-        {
-            List<Claim> userClaims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, "nameid"),
-                new Claim(ClaimTypes.Name, "name"),
-                new Claim(ClaimTypes.Role, "role1"),
-                new Claim(ClaimTypes.Role, "role2")
-            };
-
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-            AuthenticationProperties apr = new AuthenticationProperties() { ExpiresUtc = new DateTimeOffset().AddMinutes(20) };
-
-            await HttpContext.RequestServices.GetRequiredService<IAuthenticationService>().SignInAsync(HttpContext, "cookies", claimsPrincipal, apr);
-
-            HttpContext.Session.SetKey<bool>("login", true);
-
-            HttpContext.User = claimsPrincipal;
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        [NonAction]
         private async Task<IActionResult> LoginUser(string username, string password, bool remember)
         {
-            //// get roles against a service or stg else.
-            //List<Claim> userClaims = new List<Claim>()
-            //    {
-            //    new Claim(ClaimTypes.NameIdentifier, "nameid"),
-            //        new Claim(ClaimTypes.Name, "name"),
-            //        new Claim(ClaimTypes.Role, "role")
-            //    };
-            //ClaimsIdentity claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
-            //ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            //HttpContext.Session.SetKey<bool>("login", true);
-
-            //await HttpContext.SignInAsync(
-            //    CookieAuthenticationDefaults.AuthenticationScheme,
-            //    claimsPrincipal,
-            //    new AuthenticationProperties
-            //    {
-            //        AllowRefresh = true,
-            //        ExpiresUtc = DateTime.UtcNow.AddMinutes(10),
-            //        IsPersistent = (true),
-            //        IssuedUtc = DateTime.UtcNow
-            //    }
-            //);
-
-            //System.Security.Claims.ClaimsIdentity ci2 = ((System.Security.Claims.ClaimsIdentity)User.Identity);
-            //return RedirectToAction("Index", "Home");
-
-
-
             if (_authenticator.AuthenticateUser("", username, password))
             {
-                //IServiceProvider services = HttpContext.RequestServices;
-                //IAuthorize authorizer = services.GetRequiredService<IAuthorize>();
-
                 AuthenticationTicket userTicket = _authorizer.GetTicket(TestAccounts.GetUserClaims());                              
 
                 HttpContext.Session.SetKey<bool>(Constants.SessionKeyLogin , true);
 
-                //await HttpContext.SignInAsync(
-                //    CookieAuthenticationDefaults.AuthenticationScheme,
-                //    claimsPrincipal,
-                //    new AuthenticationProperties
-                //    {
-                //        AllowRefresh = true,
-                //        ExpiresUtc = DateTime.UtcNow.AddMinutes(10),
-                //        IsPersistent = (true),
-                //        IssuedUtc = DateTime.UtcNow
-                //    }
-                //);
-                HttpContext.Session.SetKey<bool>("login", true);
                 await HttpContext.SignInAsync(
                     userTicket.AuthenticationScheme,
                     userTicket.Principal,
                     userTicket.Properties
                 );
 
-//                await HttpContext.SignInAsync(
-//    userTicket.AuthenticationScheme,
-//    userTicket.Principal,
-//    userTicket.Properties
-//);
-
-                // Check user identity:
+                // Get Principlal:
                 System.Security.Claims.ClaimsIdentity ci = ((System.Security.Claims.ClaimsIdentity)User.Identity);
+                
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -196,18 +119,24 @@
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Remove("login");
+            HttpContext.Session.RemoveKey(Constants.SessionKeyLogin);
 
             HttpContext.Session.Clear();
 
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var cookie = this.Request.Cookies["__app__auth__"];
-
-            if (cookie != null)
+            var session_cookie = HttpContext.Request.Cookies[Constants.Session_Cookie_Name];
+            if (session_cookie != null)
             {
                 var options = new CookieOptions { Expires = DateTime.Now.AddDays(-1) };
-                this.Response.Cookies.Append("__app__auth__", cookie, options);
+                HttpContext.Response.Cookies.Append(Constants.Session_Cookie_Name, session_cookie, options);
+            }
+
+            var auth_cookie = HttpContext.Request.Cookies[Constants.Auth_Cookie_Name];
+            if (auth_cookie != null)
+            {
+                var options = new CookieOptions { Expires = DateTime.Now.AddDays(-1) };
+                HttpContext.Response.Cookies.Append(Constants.Session_Cookie_Name, auth_cookie, options);
             }
 
             return RedirectToAction("Login");
@@ -314,3 +243,37 @@
 
 }
 
+
+//[NonAction]
+//private async Task<IActionResult> CustomLogin()
+//{
+//    List<Claim> userClaims = new List<Claim>();
+//    ClaimsIdentity claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+//    ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+//    AuthenticationProperties apr = new AuthenticationProperties() { ExpiresUtc = new DateTimeOffset().AddMinutes(20) };
+//    await HttpContext.RequestServices.GetRequiredService<IAuthenticationService>().SignInAsync(HttpContext, "cookies", claimsPrincipal, apr);
+//    HttpContext.Session.SetKey<bool>("login", true);
+//    HttpContext.User = claimsPrincipal;
+//    return RedirectToAction("Index", "Home");
+//}
+
+
+//IServiceProvider services = HttpContext.RequestServices;
+//IAuthorize authorizer = services.GetRequiredService<IAuthorize>();
+//List<Claim> userClaims = new List<Claim>();
+//ClaimsIdentity claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+//ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+//HttpContext.Session.SetKey<bool>("login", true);
+//await HttpContext.SignInAsync(
+//    CookieAuthenticationDefaults.AuthenticationScheme,
+//    claimsPrincipal,
+//    new AuthenticationProperties
+//    {
+//        AllowRefresh = true,
+//        ExpiresUtc = DateTime.UtcNow.AddMinutes(10),
+//        IsPersistent = (true),
+//        IssuedUtc = DateTime.UtcNow
+//    }
+//);
+//System.Security.Claims.ClaimsIdentity ci2 = ((System.Security.Claims.ClaimsIdentity)User.Identity);
+//return RedirectToAction("Index", "Home");

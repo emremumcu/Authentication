@@ -1,4 +1,5 @@
-﻿using Authentication.AppLib.StartupExt;
+﻿using Authenticate.AppLib.Concrete;
+using Authentication.AppLib.StartupExt;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
@@ -85,7 +86,7 @@ public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
     {
         ClaimsPrincipal user = context.Principal;
 
-        Boolean login = context.HttpContext.Session.GetKey<bool>("login");
+        Boolean login = context.HttpContext.Session.GetKey<bool>(Constants.SessionKeyLogin);
 
         if (!(user.Identity.IsAuthenticated && login))
         {
