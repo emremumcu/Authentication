@@ -26,15 +26,15 @@
        
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, BaseRequirement requirement)
         {
-            if (context.Resource is HttpContext httpContext)
-            {
-                var endpoint = httpContext.GetEndpoint();
-                var actionDescriptor = endpoint.Metadata.GetMetadata<Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor>();
-            }
-            else if (context.Resource is Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext mvcContext) 
-            {
-                // ...
-            }
+            //if (context.Resource is HttpContext httpContext)
+            //{
+            //    var endpoint = httpContext.GetEndpoint();
+            //    var actionDescriptor = endpoint.Metadata.GetMetadata<Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor>();
+            //}
+            //else if (context.Resource is Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext mvcContext) 
+            //{
+            //    // ...
+            //}
 
             try
             {

@@ -20,11 +20,10 @@
                 //options.AddPolicy(DeveloperRequirement.PolicyName, AuthorizationPolicyLibrary.developerPolicy);
             });
 
-            //services.AddSingleton<IAuthorizationHandler, BaseHandler>();
-            //services.AddSingleton<IAuthorizationHandler, UserHandler>();
-            //services.AddSingleton<IAuthorizationHandler, DeveloperHandler>();
-            //services.AddSingleton<IAuthorizationHandler, AdminHandler>();
-            //services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+            services.AddSingleton<IAuthorizationHandler, BaseHandler>();
+            services.AddSingleton<IAuthorizationHandler, UserHandler>();
+            services.AddSingleton<IAuthorizationHandler, AdminHandler>();
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
             // TODO Set Authorizer
             services.AddSingleton<IAuthorize, TestAuthorize>();
