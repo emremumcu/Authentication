@@ -1,5 +1,6 @@
 ﻿namespace Authentication.AppLib.StartupExt
 {
+    using Authenticate.AppLib.Concrete;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,11 @@
         {
             return session.HasKey(key);
         }
+
+        public static void RemoveKey(this ISession session, string key)
+        {
+            session.Remove(key);
+        }
     }
 
     public static class SessionExtension
@@ -44,8 +50,8 @@
             // HttpContext.Session can't be accessed before UseSession has been called.
             services.AddSession(options =>
             {
-                options.Cookie.Name = "AppSessionCookie";
-                options.IdleTimeout = TimeSpan.FromMinutes(20);
+                options.Cookie.Name = Constants.Session_Cookie_Name;
+                options.IdleTimeout = Constants.Session_IdleTimeout;
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });

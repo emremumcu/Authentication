@@ -1,6 +1,8 @@
 ﻿namespace Authentication.Controllers
 {
     using Authenticate.AppLib.Abstract;
+    using Authenticate.AppLib.Concrete;
+    using Authentication.AppLib.Concrete;
     using Authentication.AppLib.StartupExt;
     using Authentication.AppLib.Tools;
     using Authentication.ViewModels;
@@ -24,6 +26,15 @@
     public partial class AccountController : Controller
     {
         private IAuthenticate _authenticator;
+        private IAuthorize _authorizer;
+
+        public AccountController(IAuthenticate authenticator, IAuthorize authorizer)
+        {
+            
+
+            _authenticator = authenticator;
+            _authorizer = authorizer;
+        }
 
         [NonAction]
         private async Task<IActionResult> CustomLogin()
@@ -54,24 +65,42 @@
         [NonAction]
         private async Task<IActionResult> LoginUser(string username, string password, bool remember)
         {
+            //// get roles against a service or stg else.
+            //List<Claim> userClaims = new List<Claim>()
+            //    {
+            //    new Claim(ClaimTypes.NameIdentifier, "nameid"),
+            //        new Claim(ClaimTypes.Name, "name"),
+            //        new Claim(ClaimTypes.Role, "role")
+            //    };
+            //ClaimsIdentity claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+            //ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            //HttpContext.Session.SetKey<bool>("login", true);
+
+            //await HttpContext.SignInAsync(
+            //    CookieAuthenticationDefaults.AuthenticationScheme,
+            //    claimsPrincipal,
+            //    new AuthenticationProperties
+            //    {
+            //        AllowRefresh = true,
+            //        ExpiresUtc = DateTime.UtcNow.AddMinutes(10),
+            //        IsPersistent = (true),
+            //        IssuedUtc = DateTime.UtcNow
+            //    }
+            //);
+
+            //System.Security.Claims.ClaimsIdentity ci2 = ((System.Security.Claims.ClaimsIdentity)User.Identity);
+            //return RedirectToAction("Index", "Home");
+
+
+
             if (_authenticator.AuthenticateUser("", username, password))
             {
-                // get roles against a service or stg else.
-                List<Claim> userClaims = new List<Claim>()
-                {
-                    new Claim(ClaimTypes.Name, "name"),
-                    new Claim(ClaimTypes.Role, "role")
-                };
+                //IServiceProvider services = HttpContext.RequestServices;
+                //IAuthorize authorizer = services.GetRequiredService<IAuthorize>();
 
-                IServiceProvider services = HttpContext.RequestServices;
-                IAuthorize authorizer = services.GetRequiredService<IAuthorize>();
-                AuthenticationTicket ticket = authorizer.GetTicket( userClaims);
+                AuthenticationTicket userTicket = _authorizer.GetTicket(TestAccounts.GetUserClaims());                              
 
-                ClaimsIdentity claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-                HttpContext.Session.SetKey<bool>("login", true);
+                HttpContext.Session.SetKey<bool>(Constants.SessionKeyLogin , true);
 
                 //await HttpContext.SignInAsync(
                 //    CookieAuthenticationDefaults.AuthenticationScheme,
@@ -84,16 +113,21 @@
                 //        IssuedUtc = DateTime.UtcNow
                 //    }
                 //);
-
+                HttpContext.Session.SetKey<bool>("login", true);
                 await HttpContext.SignInAsync(
-                    ticket.AuthenticationScheme,
-                    ticket.Principal,
-                    ticket.Properties
+                    userTicket.AuthenticationScheme,
+                    userTicket.Principal,
+                    userTicket.Properties
                 );
+
+//                await HttpContext.SignInAsync(
+//    userTicket.AuthenticationScheme,
+//    userTicket.Principal,
+//    userTicket.Properties
+//);
 
                 // Check user identity:
                 System.Security.Claims.ClaimsIdentity ci = ((System.Security.Claims.ClaimsIdentity)User.Identity);
-
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -107,8 +141,10 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([FromServices] IAuthenticate authenticator, LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
+            var a = HttpContext.Session.GetKey<string>(Constants.SessionKeyCaptcha);
+
             void ClearCaptchaText()
             {
                 // Even the CaptchaCode is cleared in Model,
@@ -131,7 +167,6 @@
                     }
                     else
                     {
-                        _authenticator = authenticator;
                         return await LoginUser(model.Username, model.Password, model.RememberMe);
                     }
                 }

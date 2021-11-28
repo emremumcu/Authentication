@@ -1,5 +1,7 @@
 ﻿namespace Authentication.AppLib.Requirements
 {
+    using Authenticate.AppLib.Concrete;
+    using Authentication.AppLib.StartupExt;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using System;
@@ -22,7 +24,8 @@
             _serviceProvider = serviceProvider;
         }
 
-        /// <summary>
+        /// <summary> 
+        /// Requirements: NameIdentifier claim & Session login key (as true)
         /// If BaseRequirement is not met, all user & login related information is cleared.
         /// </summary>        
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, BaseRequirement requirement)
@@ -34,6 +37,7 @@
 
             try
             {
+                // User MUST have a NameIdentifier
                 if (!context.User.HasClaim(c => c.Type == ClaimTypes.NameIdentifier))
                 {
                     context.Fail();
@@ -41,6 +45,7 @@
                     return Task.CompletedTask;
                 }
 
+                // Session MUST have a LOGIN key set to true
                 if (_httpContextAccessor.HttpContext.Session.GetKey<bool>(Constants.SessionKeyLogin))
                 {
                     context.Succeed(requirement);
@@ -62,18 +67,22 @@
         private void RemoveUserLoginInfo()
         {
             _httpContextAccessor.HttpContext.Session.Remove(Constants.SessionKeyLogin);
-
-            _httpContextAccessor.HttpContext.Session.Clear();
-
+            // _httpContextAccessor.HttpContext.Session.Clear(); // Do NOT clear session
             _httpContextAccessor.HttpContext.User = null;
 
-            var cookie = _httpContextAccessor.HttpContext.Request.Cookies[Constants.Cookie_Name];
+            //var session_cookie = _httpContextAccessor.HttpContext.Request.Cookies[Constants.Session_Cookie_Name];
+            //if (session_cookie != null)
+            //{
+            //    var options = new CookieOptions { Expires = DateTime.Now.AddDays(-1) };
+            //    _httpContextAccessor.HttpContext.Response.Cookies.Append(Constants.Session_Cookie_Name, session_cookie, options);
+            //}
 
-            if (cookie != null)
-            {
-                var options = new CookieOptions { Expires = DateTime.Now.AddDays(-1) };
-                _httpContextAccessor.HttpContext.Response.Cookies.Append(Constants.Cookie_Name, cookie, options);
-            }
+            //var auth_cookie = _httpContextAccessor.HttpContext.Request.Cookies[Constants.Auth_Cookie_Name];
+            //if (auth_cookie != null)
+            //{
+            //    var options = new CookieOptions { Expires = DateTime.Now.AddDays(-1) };
+            //    _httpContextAccessor.HttpContext.Response.Cookies.Append(Constants.Session_Cookie_Name, auth_cookie, options);
+            //}
         }
     }
 }

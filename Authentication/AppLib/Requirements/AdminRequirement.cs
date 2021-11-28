@@ -7,8 +7,10 @@
     using System.Threading.Tasks;
 
     public class AdminRequirement : IAuthorizationRequirement
-    {
-        public string RoleName { get; private set; }
+    {   
+        public string PolicyName { get; private set; } = "AdminPolicy";
+
+        public string RoleName { get; private set; } = "ADMIN";
 
         public AdminRequirement(string adminRoleName)
         {
@@ -18,9 +20,7 @@
 
     public class AdminHandler : AuthorizationHandler<AdminRequirement>
     {
-        public const string PolicyName = "AdminPolicy";
 
-        public const string RoleName = "VS_ADMIN";
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AdminRequirement requirement)
         {
@@ -32,17 +32,19 @@
                     ClaimsPrincipal principal = context.User;
 
                     String role = principal.FindFirst(ClaimTypes.Role).Value;
+                    
+                    return Task.CompletedTask;
 
-                    if (role.Split(Constants.Claims_Role_Seperator).Any(i => i == requirement.RoleName))
-                    {
-                        context.Succeed(requirement);
-                        return Task.CompletedTask;
-                    }
-                    else
-                    {
-                        context.Fail();
-                        return Task.CompletedTask;
-                    }
+                    //if (role.Split(Constants.Claims_Role_Seperator).Any(i => i == requirement.RoleName))
+                    //{
+                    //    context.Succeed(requirement);
+                    //    return Task.CompletedTask;
+                    //}
+                    //else
+                    //{
+                    //    context.Fail();
+                    //    return Task.CompletedTask;
+                    //}
                 }
                 else
                 {

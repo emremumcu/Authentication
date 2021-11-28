@@ -23,11 +23,10 @@
         public static string Auth_Cookie_ReturnUrlParameter = "ReturnUrl";
         public static TimeSpan Auth_Cookie_ExpireTimeSpan = TimeSpan.FromMinutes(20);
 
-
-
         // SESSION KEYS
 
         public static string SessionKeyLogin = "LOGIN";
+        public static string SessionKeyCaptcha = "CAPTCHA";
         public static string SessionKeyLoginUser = "LOGINUSER";
         public static string SessionKey_SelectedRole = "SELECTED_ROLE";
         public static string SessionKey_System_Message = "SYSTEM_MESSAGE";

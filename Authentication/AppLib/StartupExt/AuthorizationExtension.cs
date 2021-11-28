@@ -1,6 +1,7 @@
 ﻿namespace Authentication.AppLib.StartupExt
 {
-    using Authentication.AppLib.Base;
+    using Authenticate.AppLib.Abstract;
+    using Authenticate.AppLib.Concrete;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
@@ -12,45 +13,20 @@
         {
             services.AddAuthorization(options =>
             {
-                /*
-                 * Gets or sets the default authorization policy with no policy name specified.
-                 * Defaults to require authenticated users.
-                 * 
-                 * The DefaultPolicy is the policy that is applied when:
-                 *      (*) You specify that authorization is required, either using RequireAuthorization(), by applying an AuthorizeFilter, 
-                 *          or by using the[Authorize] attribute on your actions / Razor Pages.
-                 *      (*) You don't specify which policy to use.
-                 *      
-                 */
+                //options.DefaultPolicy = AuthorizationPolicyLibrary.defaultPolicy;
+                //options.FallbackPolicy = AuthorizationPolicyLibrary.fallbackPolicy;               
+                //options.AddPolicy(AdminHandler.PolicyName, AuthorizationPolicyLibrary.adminPolicy);
+                //options.AddPolicy(DeveloperRequirement.PolicyName, AuthorizationPolicyLibrary.developerPolicy);
+            });
 
-                //options.DefaultPolicy = new AuthorizationPolicyBuilder()
-                //     .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
-                //     .RequireAuthenticatedUser()
-                //     .Build();
+            //services.AddSingleton<IAuthorizationHandler, BaseHandler>();
+            //services.AddSingleton<IAuthorizationHandler, UserHandler>();
+            //services.AddSingleton<IAuthorizationHandler, DeveloperHandler>();
+            //services.AddSingleton<IAuthorizationHandler, AdminHandler>();
+            //services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
-                options.DefaultPolicy = AuthorizationPolicyLibrary.defaultPolicy;
-
-                /*
-                 * Gets or sets the fallback authorization policy when no IAuthorizeData have been provided.
-                 * By default the fallback policy is null.
-                 * 
-                 * The FallbackPolicy is applied when the following is true:
-                 *      (*) The endpoint does not have any authorisation applied. No[Authorize] attribute, no RequireAuthorization, nothing.
-                 *      (*) The endpoint does not have an[AllowAnonymous] applied, either explicitly or using conventions.
-                 *      
-                 * So the FallbackPolicy only applies if you don't apply any other sort of authorization policy, 
-                 * including the DefaultPolicy, When that's true, the FallbackPolicy is used.
-                 * By default, the FallbackPolicy is a no - op; it allows all requests without authorization.
-                 * 
-                 */
-
-                //options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                //     .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
-                //     .RequireAuthenticatedUser()
-                //     .Build();
-
-                options.FallbackPolicy = AuthorizationPolicyLibrary.fallbackPolicy;
-            });            
+            // TODO Set Authorizer
+            services.AddSingleton<IAuthorize, TestAuthorize>();
 
             return services;
         }
@@ -64,6 +40,48 @@
 
             return app;
         }
+    }
+
+    public static class AuthorizationPolicyLibrary
+    {
+        public static AuthorizationPolicy defaultPolicy = new AuthorizationPolicyBuilder()
+           .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+           .RequireAuthenticatedUser()
+           //.AddRequirements(new BaseRequirement())           
+           .Build();
+
+        public static AuthorizationPolicy fallbackPolicy = new AuthorizationPolicyBuilder()
+           .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+           .RequireAuthenticatedUser()
+           //.AddRequirements(new BaseRequirement())
+           .Build();
+
+        public static AuthorizationPolicy developerPolicy = new AuthorizationPolicyBuilder()
+            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .RequireRole("dev")
+            .Build();
+
+        public static AuthorizationPolicy adminPolicy = new AuthorizationPolicyBuilder()
+            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .RequireRole("admin")
+            .Build();
+
+        public static AuthorizationPolicy age18Policy = new AuthorizationPolicyBuilder()
+            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            //.Requirements.Add(new AgeRequirement(18))
+            .Build();
+
+        public static AuthorizationPolicy assertionPolicy = new AuthorizationPolicyBuilder()
+            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .RequireRole("admin")
+            // The Require Assertion method takes a lambda that receives the Http Context object and returns a Boolean value. 
+            // Therefore, the assertion is simply a conditional statement.
+            .RequireAssertion(ctx => { return ctx.User.HasClaim("editor", "contents") || ctx.User.HasClaim("level", "senior"); })
+            .Build();
     }
 }
 

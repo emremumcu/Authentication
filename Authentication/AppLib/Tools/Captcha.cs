@@ -1,5 +1,7 @@
 ﻿namespace Authentication.AppLib.Tools
 {
+    using Authenticate.AppLib.Concrete;
+    using Authentication.AppLib.StartupExt;
     using Authentication.Models;
     using Microsoft.AspNetCore.Http;
     using System;
@@ -12,7 +14,7 @@
     public static class Captcha
     {
         // INFO Capctha letters:
-        private const string Letters = "0123456789ABCDEF";
+        private const string Letters = "0123456789";
 
         private static string GenerateCaptchaCode(int characterCount = 4)
         {
@@ -29,22 +31,22 @@
 
         public static bool ValidateCaptchaCode(string userInputCaptcha, HttpContext context)
         {
-            var isValid = (userInputCaptcha == context.Session.GetString("CaptchaCode"));
-            context.Session.Remove("CaptchaCode");
+            var isValid = (userInputCaptcha == context.Session.GetKey<string>(Constants.SessionKeyCaptcha));
+            context.Session.RemoveKey(Constants.SessionKeyCaptcha);
             return isValid;
         }
 
         public static CaptchaResult GenerateCaptchaImage(HttpContext context)
         {
             CaptchaResult cr = GenerateCaptchaImage(captchaCode: GenerateCaptchaCode());
-            context.Session.SetString("CaptchaCode", cr.CaptchaCode);
+            context.Session.SetKey<string>(Constants.SessionKeyCaptcha, cr.CaptchaCode);
             return cr;
         }
 
         public static CaptchaResult GenerateCaptchaImage2(HttpContext context)
         {
             CaptchaResult cr = GenerateCaptchaImage2(captchaCode: GenerateCaptchaCode());
-            context.Session.SetString("CaptchaCode", cr.CaptchaCode);
+            context.Session.SetKey<string>(Constants.SessionKeyCaptcha, cr.CaptchaCode);
             return cr;
         }
 

@@ -27,12 +27,12 @@ namespace Authentication
 
             services._AddAuthorization();
 
-            services.AddSingleton<IAuthenticate, TestAuthenticate>();
 
-            services.AddSingleton<IAuthorize, TestAuthorize>();
+
+
 
             // TODO: commen tout in PROD
-            services.AddSingleton<IPolicyEvaluator, TestPolicyEvaluator>();
+            //services.AddSingleton<IPolicyEvaluator, TestPolicyEvaluator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

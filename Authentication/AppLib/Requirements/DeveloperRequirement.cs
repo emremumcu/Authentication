@@ -1,6 +1,5 @@
 ﻿namespace Authentication.AppLib.Requirements
 {
-    using AspNetTemplate2.AppLib.Ext;
     using Microsoft.AspNetCore.Authorization;
     using System.Collections.Generic;
     using System.Linq;
@@ -25,16 +24,16 @@
         {
             try
             {
-                if (context.User.Identity.IsAuthenticated)
-                {
-                    ClaimsIdentity ci = ((System.Security.Claims.ClaimsIdentity)context.User.Identity);
+                //if (context.User.Identity.IsAuthenticated)
+                //{
+                //    ClaimsIdentity ci = ((System.Security.Claims.ClaimsIdentity)context.User.Identity);
 
-                    if (requirement.RoleNames.Intersect(ci.GetRoles()).Count() > 0)
-                    {
-                        context.Succeed(requirement);
-                        return Task.CompletedTask;
-                    }
-                }
+                //    if (requirement.RoleNames.Intersect(ci.GetRoles()).Count() > 0)
+                //    {
+                //        context.Succeed(requirement);
+                //        return Task.CompletedTask;
+                //    }
+                //}
 
                 context.Fail();
                 return Task.CompletedTask;
